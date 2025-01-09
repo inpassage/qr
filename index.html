@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مولد الباركود الفاخر</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        @keyframes gradientAnimation {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        body {
+            background: linear-gradient(
+                -45deg, 
+                #ee7752, 
+                #e73c7e, 
+                #23a6d5, 
+                #23d5ab
+            );
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            overflow-x: hidden;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-morphism:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+        }
+
+        .neon-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg, 
+                transparent, 
+                rgba(255,255,255,0.3), 
+                transparent
+            );
+            transition: all 0.5s ease;
+        }
+
+        .neon-button:hover::before {
+            left: 100%;
+        }
+
+        #barcodeCanvas {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #barcodeCanvas:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto max-w-md glass-morphism p-8 shadow-2xl relative">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none"></div>
+        
+        <h1 class="text-4xl font-bold text-center mb-8 text-white drop-shadow-lg">
+           باركود الفاخر
+        </h1>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-white mb-2">أدخل النص أو الرابط</label>
+                <input 
+                    type="text" 
+                    id="inputText" 
+                    class="w-full px-4 py-2 rounded-lg bg-white/20 text-black placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-black/30"
+                    placeholder="أدخل النص أو الرابط"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-white mb-2">نوع الباركود</label>
+                <select 
+                    id="barcodeType" 
+                    class="w-full px-4 py-2 rounded-lg bg-black/20 text-black focus:outline-none focus:ring-2 focus:ring-black/30"
+                >
+                    <option value="qr" class="bg-gray-800">QR كود</option>
+                    <option value="barcode" class="bg-gray-800">باركود</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-white mb-2">تحميل الشعار (اختياري)</label>
+                <input 
+                    type="file" 
+                    id="logoUpload" 
+                    accept="image/*" 
+                    class="w-full px-4 py-2 rounded-lg bg-white/20 text-white file:mr-4 file:rounded-full file:border-0 file:bg-white/30 file:text-white hover:file:bg-white/50"
+                >
+            </div>
+            
+            <button 
+                onclick="generateBarcode()" 
+                class="w-full py-3 rounded-lg bg-white/30 text-white neon-button hover:bg-white/40 transition-all duration-300"
+            >
+                توليد الباركود
+            </button>
+        </div>
+        
+        <div id="barcodeResult" class="mt-8 text-center">
+            <canvas 
+                id="barcodeCanvas" 
+                class="mx-auto max-w-full mb-4"
+            ></canvas>
+            <button 
+                id="downloadBtn" 
+                onclick="downloadBarcode()" 
+                class="hidden px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300"
+            >
+                تحميل الباركود
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function generateBarcode() {
+            const inputText = document.getElementById('inputText').value;
+            const barcodeType = document.getElementById('barcodeType').value;
+            const logoFile = document.getElementById('logoUpload').files[0];
+            const canvas = document.getElementById('barcodeCanvas');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            canvas.width = 300;
+            canvas.height = 300;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (barcodeType === 'qr') {
+                // توليد QR Code مع معالجة الشعار بشكل احترافي
+                const qrOptions = {
+                    errorCorrectionLevel: 'H', // مستوى عالي من تصحيح الخطأ
+                    width: 300,
+                    margin: 1,
+                    color: {
+                        dark: "#000000",  // لون أسود للخطوط
+                        light: "#ffffff"  // لون أبيض للخلفية
+                    }
+                };
+
+                QRCode.toCanvas(canvas, inputText, qrOptions, function (error) {
+                    if (error) {
+                        console.error('خطأ في إنشاء QR Code', error);
+                        return;
+                    }
+
+                    // إذا تم تحميل شعار
+                    if (logoFile) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const logoImg = new Image();
+                            logoImg.onload = function() {
+                                // حساب حجم الشعار بنسبة معينة من حجم QR Code
+                                const logoSize = 80; // حجم ثابت للشعار
+                                const centerX = canvas.width / 2 - logoSize / 2;
+                                const centerY = canvas.width / 2 - logoSize / 2;
+
+                                // إنشاء مربع أبيض خلفية للشعار للتأكد من الوضوح
+                                ctx.fillStyle = 'white';
+                                ctx.fillRect(
+                                    centerX - 5, 
+                                    centerY - 5, 
+                                    logoSize + 10, 
+                                    logoSize + 10
+                                );
+
+                                // رسم الشعار
+                                ctx.drawImage(
+                                    logoImg, 
+                                    centerX, 
+                                    centerY, 
+                                    logoSize, 
+                                    logoSize
+                                );
+
+                                downloadBtn.classList.remove('hidden');
+                            };
+                            logoImg.src = e.target.result;
+                        };
+                        reader.readAsDataURL(logoFile);
+                    } else {
+                        downloadBtn.classList.remove('hidden');
+                    }
+                });
+            } else {
+                // باركود عادي
+                JsBarcode(canvas, inputText, {
+                    format: "CODE128",
+                    width: 2,
+                    height: 100,
+                    displayValue: true,
+                    fontOptions: "bold",
+                    textMargin: 5,
+                    fontSize: 15,
+                    lineColor: "#000",
+                    background: "transparent"
+                });
+                downloadBtn.classList.remove('hidden');
+            }
+        }
+
+        function downloadBarcode() {
+            const canvas = document.getElementById('barcodeCanvas');
+            const link = document.createElement('a');
+            link.download = 'barcode.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

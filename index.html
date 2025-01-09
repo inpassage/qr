@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>مولد الباركود الفاخر</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
@@ -24,6 +25,7 @@
             background-size: 400% 400%;
             animation: gradientAnimation 15s ease infinite;
             overflow-x: hidden;
+            touch-action: manipulation;
         }
 
         .glass-morphism {
@@ -33,37 +35,46 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             border-radius: 20px;
             transition: all 0.3s ease;
+            width: 95%; /* تقليل العرض قليلاً */
+            max-width: 500px; /* حد أقصى للعرض */
+            margin: 10px auto; /* توسيط الحاوية */
         }
 
-        .glass-morphism:hover {
-            transform: scale(1.02);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+        /* تحسينات للشاشات الصغيرة */
+        @media (max-width: 600px) {
+            .glass-morphism {
+                width: 90%;
+                padding: 1rem !important; /* تقليل البادينج */
+                margin: 5px auto;
+            }
+
+            h1 {
+                font-size: 1.5rem !important; /* تصغير حجم العنوان */
+            }
+
+            input, select {
+                font-size: 14px !important; /* تصغير حجم الخط */
+                padding: 8px 12px !important;
+            }
+
+            #barcodeCanvas {
+                max-width: 90% !important;
+                height: auto !important;
+            }
+        }
+
+        /* تحسينات للتفاعل على الأجهزة المحمولة */
+        input, select, button {
+            -webkit-tap-highlight-color: transparent;
+            tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .neon-button {
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
-        }
-
-        .neon-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                120deg, 
-                transparent, 
-                rgba(255,255,255,0.3), 
-                transparent
-            );
-            transition: all 0.5s ease;
-        }
-
-        .neon-button:hover::before {
-            left: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #barcodeCanvas {
@@ -71,28 +82,25 @@
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
-        }
-
-        #barcodeCanvas:hover {
-            transform: scale(1.05);
+            touch-action: none;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="container mx-auto max-w-md glass-morphism p-8 shadow-2xl relative">
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4">
+    <div class="container mx-auto glass-morphism p-4 sm:p-8 shadow-2xl relative">
         <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none"></div>
         
-        <h1 class="text-4xl font-bold text-center mb-8 text-white drop-shadow-lg">
-           مولد الباركود
+        <h1 class="text-2xl sm:text-4xl font-bold text-center mb-4 sm:mb-8 text-white drop-shadow-lg">
+           مولد الباركود المتقدم
         </h1>
         
-        <div class="space-y-4">
+        <div class="space-y-3 sm:space-y-4">
             <div>
                 <label class="block text-sm font-medium text-white mb-2">أدخل النص أو الرابط</label>
                 <input 
                     type="text" 
                     id="inputText" 
-                    class="w-full px-4 py-2 rounded-lg bg-white/20 text-black placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-black/30"
+                    class="w-full px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-white/20 text-black placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-black/30"
                     placeholder="أدخل النص أو الرابط"
                 >
             </div>
@@ -101,7 +109,7 @@
                 <label class="block text-sm font-medium text-white mb-2">نوع الباركود</label>
                 <select 
                     id="barcodeType" 
-                    class="w-full px-4 py-2 rounded-lg bg-black/20 text-black focus:outline-none focus:ring-2 focus:ring-black/30"
+                    class="w-full px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-black/20 text-black focus:outline-none focus:ring-2 focus:ring-black/30"
                 >
                     <option value="qr" class="bg-gray-800">QR كود</option>
                     <option value="barcode" class="bg-gray-800">باركود</option>
@@ -114,19 +122,19 @@
                     type="file" 
                     id="logoUpload" 
                     accept="image/*" 
-                    class="w-full px-4 py-2 rounded-lg bg-white/20 text-white file:mr-4 file:rounded-full file:border-0 file:bg-white/30 file:text-white hover:file:bg-white/50"
+                    class="w-full px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-white/20 text-white file:mr-4 file:rounded-full file:border-0 file:bg-white/30 file:text-white hover:file:bg-white/50"
                 >
             </div>
             
             <button 
                 onclick="generateBarcode()" 
-                class="w-full py-3 rounded-lg bg-white/30 text-white neon-button hover:bg-white/40 transition-all duration-300"
+                class="w-full py-2 sm:py-3 rounded-lg bg-white/30 text-white neon-button hover:bg-white/40 transition-all duration-300"
             >
                 توليد الباركود
             </button>
         </div>
         
-        <div id="barcodeResult" class="mt-8 text-center">
+        <div id="barcodeResult" class="mt-4 sm:mt-8 text-center">
             <canvas 
                 id="barcodeCanvas" 
                 class="mx-auto max-w-full mb-4"
@@ -134,7 +142,7 @@
             <button 
                 id="downloadBtn" 
                 onclick="downloadBarcode()" 
-                class="hidden px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300"
+                class="hidden px-4 sm:px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300"
             >
                 تحميل الباركود
             </button>
@@ -142,6 +150,7 @@
     </div>
 
     <script>
+        // نفس الكود السابق للسكريبت
         function generateBarcode() {
             const inputText = document.getElementById('inputText').value;
             const barcodeType = document.getElementById('barcodeType').value;
@@ -149,20 +158,22 @@
             const canvas = document.getElementById('barcodeCanvas');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            canvas.width = 300;
+            // تعديل حجم القماش بناءً على حجم الشاشة
+            const screenWidth = window.innerWidth;
+            canvas.width = Math.min(screenWidth * 0.9, 300);
             canvas.height = 300;
+            
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             if (barcodeType === 'qr') {
-                // توليد QR Code مع معالجة الشعار بشكل احترافي
                 const qrOptions = {
-                    errorCorrectionLevel: 'H', // مستوى عالي من تصحيح الخطأ
-                    width: 300,
+                    errorCorrectionLevel: 'H',
+                    width: canvas.width,
                     margin: 1,
                     color: {
-                        dark: "#000000",  // لون أسود للخطوط
-                        light: "#ffffff"  // لون أبيض للخلفية
+                        dark: "#000000",
+                        light: "#ffffff"
                     }
                 };
 
@@ -172,18 +183,15 @@
                         return;
                     }
 
-                    // إذا تم تحميل شعار
                     if (logoFile) {
                         const reader = new FileReader();
                         reader.onload = function(e) {
                             const logoImg = new Image();
                             logoImg.onload = function() {
-                                // حساب حجم الشعار بنسبة معينة من حجم QR Code
-                                const logoSize = 80; // حجم ثابت للشعار
+                                const logoSize = canvas.width * 0.25; // 25% من عرض القماش
                                 const centerX = canvas.width / 2 - logoSize / 2;
                                 const centerY = canvas.width / 2 - logoSize / 2;
 
-                                // إنشاء مربع أبيض خلفية للشعار للتأكد من الوضوح
                                 ctx.fillStyle = 'white';
                                 ctx.fillRect(
                                     centerX - 5, 
@@ -192,7 +200,6 @@
                                     logoSize + 10
                                 );
 
-                                // رسم الشعار
                                 ctx.drawImage(
                                     logoImg, 
                                     centerX, 
@@ -211,7 +218,6 @@
                     }
                 });
             } else {
-                // باركود عادي
                 JsBarcode(canvas, inputText, {
                     format: "CODE128",
                     width: 2,

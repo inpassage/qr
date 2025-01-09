@@ -26,6 +26,11 @@
             animation: gradientAnimation 15s ease infinite;
             overflow-x: hidden;
             touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
         }
 
         .glass-morphism {
@@ -35,25 +40,32 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             border-radius: 20px;
             transition: all 0.3s ease;
-            width: 95%; /* تقليل العرض قليلاً */
-            max-width: 500px; /* حد أقصى للعرض */
-            margin: 10px auto; /* توسيط الحاوية */
+            width: 95%;
+            max-width: 500px;
+            margin: 10px auto;
         }
 
-        /* تحسينات للشاشات الصغيرة */
+        .logo-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 25px;
+            object-fit: cover;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
         @media (max-width: 600px) {
             .glass-morphism {
                 width: 90%;
-                padding: 1rem !important; /* تقليل البادينج */
+                padding: 1rem !important;
                 margin: 5px auto;
             }
 
             h1 {
-                font-size: 1.5rem !important; /* تصغير حجم العنوان */
+                font-size: 1.5rem !important;
             }
 
             input, select {
-                font-size: 14px !important; /* تصغير حجم الخط */
+                font-size: 14px !important;
                 padding: 8px 12px !important;
             }
 
@@ -61,9 +73,13 @@
                 max-width: 90% !important;
                 height: auto !important;
             }
+
+            .logo-img {
+                width: 120px;
+                height: 120px;
+            }
         }
 
-        /* تحسينات للتفاعل على الأجهزة المحمولة */
         input, select, button {
             -webkit-tap-highlight-color: transparent;
             tap-highlight-color: transparent;
@@ -84,11 +100,25 @@
             transition: transform 0.3s ease;
             touch-action: none;
         }
+
+        .copyright {
+            color: white;
+            opacity: 0.7;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            width: 100%;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-2 sm:p-4">
+<body>
     <div class="container mx-auto glass-morphism p-4 sm:p-8 shadow-2xl relative">
         <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none"></div>
+        
+        <div class="text-center mb-4">
+            <img src="images/logo.png" alt="Infinity Passage Logo" class="mx-auto mb-2 logo-img">
+        </div>
         
         <h1 class="text-2xl sm:text-4xl font-bold text-center mb-4 sm:mb-8 text-white drop-shadow-lg">
            مولد الباركود المتقدم
@@ -149,8 +179,11 @@
         </div>
     </div>
 
+    <div class="copyright">
+        © 2025 Infinity Passage. جميع الحقوق محفوظة.
+    </div>
+
     <script>
-        // نفس الكود السابق للسكريبت
         function generateBarcode() {
             const inputText = document.getElementById('inputText').value;
             const barcodeType = document.getElementById('barcodeType').value;
@@ -158,7 +191,6 @@
             const canvas = document.getElementById('barcodeCanvas');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            // تعديل حجم القماش بناءً على حجم الشاشة
             const screenWidth = window.innerWidth;
             canvas.width = Math.min(screenWidth * 0.9, 300);
             canvas.height = 300;
@@ -188,7 +220,7 @@
                         reader.onload = function(e) {
                             const logoImg = new Image();
                             logoImg.onload = function() {
-                                const logoSize = canvas.width * 0.25; // 25% من عرض القماش
+                                const logoSize = canvas.width * 0.25;
                                 const centerX = canvas.width / 2 - logoSize / 2;
                                 const centerY = canvas.width / 2 - logoSize / 2;
 
